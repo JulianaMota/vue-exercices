@@ -10,6 +10,12 @@
       font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
       color: #888;
     }
+    .strikeout {
+      text-decoration: line-through;
+    }
+    .priority {
+      color: aqua;
+    }
   </style>
   <body>
     <div id="shopping-list">
@@ -37,6 +43,7 @@
           placeholder="Add an item"
           @keyup.enter="saveItem"
         />
+        <p>{{ characterCount }}/200</p>
         <button
           class="btn btn-primary"
           v-bind:disabled="newItem.length === 0"
@@ -47,7 +54,14 @@
       </div>
       <a v-bind:href="newItem" target="_blank">Dynamic Link</a>
       <ul>
-        <li v-for="item in items">{{ item }}</li>
+        <li
+          v-for="item in reversedItems"
+          :class="[item.purchased ? 'strikeout' : '', item.highPriority ? 'priority' : '']"
+          @click="togglePurchased(item)"
+        >
+          <!-- :class="{strikeout: item.purchased}" if you use just on class you can add like this is more simple and has less text -->
+          {{ item.label }}
+        </li>
       </ul>
       <p v-if="items.length === 0">Nice job! You've bought all the items.</p>
     </div>
@@ -62,18 +76,48 @@
           //   header: null
           header: "Shopping list App",
           newItem: "",
-          //   items: ["10 party hats", "2 board games", "20 cups"]
-          items: []
+          items: [
+            {
+              label: "10 party hats",
+              purchased: false,
+              highPriority: false
+            },
+            {
+              label: "2 board games",
+              purchased: true,
+              highPriority: false
+            },
+            {
+              label: "20 cups",
+              purchased: false,
+              highPriority: true
+            }
+          ]
+          //   items: []
+        },
+        computed: {
+          characterCount() {
+            return this.newItem.length;
+          },
+          reversedItems() {
+            return this.items.slice(0).reverse();
+          }
         },
         methods: {
           saveItem: function() {
-            this.items.push(this.newItem);
+            this.items.push({
+              label: this.newItem,
+              purchased: false
+            });
             this.newItem = "";
           },
           changeState: function(newState) {
             this.state = newState;
 
             this.newItem = "";
+          },
+          togglePurchased: function(item) {
+            item.purchased = !item.purchased;
           }
         }
       });
