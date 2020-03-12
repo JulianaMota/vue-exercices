@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue exercices</title>
+  </head>
+  <style>
+    body {
+      font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+      color: #888;
+    }
+  </style>
+  <body>
+    <div id="shopping-list">
+      <div class="header">
+        <h1>{{ header.toLocaleUpperCase() }}</h1>
+        <button
+          v-if="state === 'default'"
+          class="btn btn-primary"
+          @click="changeState('edit')"
+        >
+          Add Item
+        </button>
+        <button v-else class="btn btn-primary" @click="changeState('default')">
+          Cancel
+        </button>
+        <!-- header that works if its null or empty -->
+        <!-- <h1>{{ header ? header: 'welcome' }}</h1> -->
+        <!-- input to change the header content -->
+        <!-- <input type="text" v-model="header" /> -->
+      </div>
+      <div v-if="state === 'edit'" class="add-item-form">
+        <input
+          type="text"
+          v-model="newItem"
+          placeholder="Add an item"
+          @keyup.enter="saveItem"
+        />
+        <button
+          class="btn btn-primary"
+          v-bind:disabled="newItem.length === 0"
+          @click="saveItem"
+        >
+          Add
+        </button>
+      </div>
+      <a v-bind:href="newItem" target="_blank">Dynamic Link</a>
+      <ul>
+        <li v-for="item in items">{{ item }}</li>
+      </ul>
+      <p v-if="items.length === 0">Nice job! You've bought all the items.</p>
+    </div>
+
+    <script src="https://unpkg.com/vue"></script>
+    <script>
+      const shoppingList = new Vue({
+        el: "#shopping-list",
+        data: {
+          state: "default",
+          // code down will work with header ? header in case you want it empty header or null
+          //   header: null
+          header: "Shopping list App",
+          newItem: "",
+          //   items: ["10 party hats", "2 board games", "20 cups"]
+          items: []
+        },
+        methods: {
+          saveItem: function() {
+            this.items.push(this.newItem);
+            this.newItem = "";
+          },
+          changeState: function(newState) {
+            this.state = newState;
+
+            this.newItem = "";
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
